@@ -261,6 +261,135 @@ public class questions {
         return root;
     }
 
+    // ====================leetcode 297==================
+
+    public String serialize(TreeNode root) {
+        if (root == null)
+            return "#,";
+        String str = root.val + ",";
+        str += serialize(root.left);
+
+        str += serialize(root.right);
+        return str;
+    }
+
+    int idx = 0;
+
+    public TreeNode deserialize(String data) {
+
+        String[] arr = data.split(",");
+
+        return dese(arr);
+    }
+
+    public TreeNode dese(String[] arr) {
+        if (idx == arr.length) {
+            return null;
+        }
+        String op = arr[idx];
+        if (op.charAt(0) == '#') {
+            idx++;
+            return null;
+        }
+        int val = 0;
+        boolean flag = false;
+        for (int i = 0; i < op.length(); i++) {
+            char ch = op.charAt(i);
+            if (ch == '-')
+                flag = true;
+            else {
+                val = (val * 10) + (ch - '0');
+            }
+        }
+        if (flag)
+            val = -val;
+
+        TreeNode root = new TreeNode(val);
+        idx++;
+        root.left = dese(arr);
+        root.right = dese(arr);
+        return root;
+    }
+
+    public TreeNode flatten_(TreeNode root) {
+        if (root == null)
+            return null;
+        TreeNode left = flatten_(root.left);
+        TreeNode right = flatten_(root.right);
+        if (left == null && right == null)
+            return root;
+        if (left == null && right != null)
+            return right;
+        if (left != null && right == null) {
+            root.right = root.left;
+            root.left = null;
+            return left;
+        }
+        TreeNode temp = root.right;
+        root.right = root.left;
+        left.right = temp;
+        root.left = null;
+        return right;
+    }
+    // construct tree from post and inorder
+
+    Node buildTree(int inorder[], int postorder[], int n) {
+        map = new HashMap<>();
+        for (int i = 0; i < inorder.length; i++)
+            map.put(inorder[i], i);
+        in = inorder;
+        post = postorder;
+        return built(0, post.length - 1, 0, in.length - 1);
+    }
+
+    static int[] in;
+    static int[] post;
+    static HashMap<Integer, Integer> map;
+
+    public static Node built(int psi, int pei, int isi, int iei) {
+        if (psi > pei || isi > iei)
+            return null;
+        Node root = new Node(post[pei]);
+        int size = map.get(post[pei]) - isi;
+        root.left = built(psi, psi + size - 1, isi, isi + size - 1);
+        root.right = built(psi + size, pei - 1, isi + size + 1, iei);
+        return root;
+    }
+
+    // remove half nodes
+    public static Node RemoveHalfNodes(Node root) {
+        if (root == null)
+            return null;
+        root.left = RemoveHalfNodes(root.left);
+        root.right = RemoveHalfNodes(root.right);
+        if (root.left == null && root.right == null)
+            return root;
+        if (root.left == null || root.right == null)
+            return root.left == null ? root.right : root.left;
+        return root;
+    }
+
+    static int idx=0;
+    Node constructTree(int n, int pre[], char preLN[])
+    {
+        idx=0;
+	    return constructTree_(n,pre,preLN);
+    }
+    
+    
+        Node constructTree_(int n, int pre[], char preLN[])
+    {
+        if(idx>=pre.length ){return null;}
+        if( preLN[idx]=='L'){
+            Node root=new Node(pre[idx]);
+            idx++;return root;}
+	    Node root=new Node(pre[idx]);
+	    idx++;
+	    root.left=constructTree_(n,pre,preLN);
+	    root.right=constructTree_(n,pre,preLN);
+	    return root;
+    }
+
 
     
 }
