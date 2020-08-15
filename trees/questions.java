@@ -369,25 +369,149 @@ public class questions {
         return root;
     }
 
-    static int idx=0;
-    Node constructTree(int n, int pre[], char preLN[])
-    {
-        idx=0;
-	    return constructTree_(n,pre,preLN);
+    static int idx = 0;
+
+    Node constructTree(int n, int pre[], char preLN[]) {
+        idx = 0;
+        return constructTree_(n, pre, preLN);
     }
-    
-    
-        Node constructTree_(int n, int pre[], char preLN[])
-    {
-        if(idx>=pre.length ){return null;}
-        if( preLN[idx]=='L'){
-            Node root=new Node(pre[idx]);
-            idx++;return root;}
-	    Node root=new Node(pre[idx]);
-	    idx++;
-	    root.left=constructTree_(n,pre,preLN);
-	    root.right=constructTree_(n,pre,preLN);
-	    return root;
+
+    Node constructTree_(int n, int pre[], char preLN[]) {
+        if (idx >= pre.length) {
+            return null;
+        }
+        if (preLN[idx] == 'L') {
+            Node root = new Node(pre[idx]);
+            idx++;
+            return root;
+        }
+        Node root = new Node(pre[idx]);
+        idx++;
+        root.left = constructTree_(n, pre, preLN);
+        root.right = constructTree_(n, pre, preLN);
+        return root;
+    }
+
+    // morristree traversal
+
+    public int kthSmallest(TreeNode root, int k) {
+        if (root == null)
+            return 0;
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left == null) {
+                k--;
+                if (k == 0)
+                    return curr.val;
+                curr = curr.right;
+            } else {
+                TreeNode prev = findrightmostmost(curr);
+                if (prev.right != null) {
+                    prev.right = null;
+                    k--;
+                    if (k == 0)
+                        return curr.val;
+                    curr = curr.right;
+                } else {
+                    prev.right = curr;
+                    curr = curr.left;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public TreeNode findrightmostmost(TreeNode root) {
+        TreeNode curr = root.left;
+        while (curr.right != null && curr.right != root)
+            curr = curr.right;
+        return curr;
+    }
+
+    // 239 leetcode
+    public int[] maxSlidingWindow(int[] nums, int k) {
+        int n = nums.length;
+        int[] pre = new int[n];
+        for (int i = 0; i < n; i++) {
+            if (i % k == 0)
+                pre[i] = nums[i];
+            else
+                pre[i] = Math.max(pre[i - 1], nums[i]);
+        }
+        int[] post = new int[n];
+        for (int i = n - 1; i >= 0; i--) {
+            int temp = i + 1;
+            if ((temp) % k == 0)
+                post[i] = nums[i];
+            else {
+                if (i + 1 < n)
+                    post[i] = Math.max(post[i + 1], nums[i]);
+                else
+                    post[i] = nums[i];
+            }
+        }
+
+        ArrayList<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (i % k == 0 && i + k - 1 < n)
+                ans.add(post[i]);
+            else {
+                if (i + k - 1 < n)
+                    ans.add(Math.max(post[i], pre[i + k - 1]));
+            }
+        }
+        int[] ar = new int[ans.size()];
+        for (int i = 0; i < ans.size(); i++)
+            ar[i] = ans.get(i);
+        return ar;
+    }
+
+    // clone tree with random pointors
+
+   static  class Tree{
+        int data;
+        Tree left,right,random;
+        Tree(int d){
+            data=d;
+            left=null;
+            right=null;
+            random=null;
+        }
+    public static Tree cloneTree(Tree tree) {
+        tree = add(tree);
+        random(tree);
+        return retans(tree);
+    }
+
+    public static Tree add(Tree node) {
+        if (node == null)
+            return null;
+        Tree temp = new Tree(node.data);
+        Tree lft = node.left;
+        node.left = temp;
+        temp.left = add(lft);
+        node.right = add(node.right);
+        return node;
+    }
+
+    public static void random(Tree root) {
+        if (root == null)
+            return;
+        if (root.left != null && root.random != null)
+            root.left.random = root.random.left;
+        random(root.left);
+        random(root.right);
+    }
+
+    public static Tree retans(Tree root) {
+        if (root == null)
+            return null;
+        Tree temp = root.right;
+        root = root.left;
+        root.left = retans(root.left);
+        root.right = retans(temp);
+        return root;
+
     }
 
 
