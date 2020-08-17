@@ -503,6 +503,7 @@ public class questions {
         random(root.right);
     }
 
+
     public static Tree retans(Tree root) {
         if (root == null)
             return null;
@@ -512,8 +513,6 @@ public class questions {
         root.right = retans(temp);
         return root;
 
-    }
-
-
-    
+    }                 
+                    
 }
