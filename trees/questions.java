@@ -468,51 +468,124 @@ public class questions {
 
     // clone tree with random pointors
 
-   static  class Tree{
+    static class Tree {
         int data;
-        Tree left,right,random;
-        Tree(int d){
-            data=d;
-            left=null;
-            right=null;
-            random=null;
+        Tree left, right, random;
+
+        Tree(int d) {
+            data = d;
+            left = null;
+            right = null;
+            random = null;
         }
-    public static Tree cloneTree(Tree tree) {
-        tree = add(tree);
-        random(tree);
-        return retans(tree);
+
+        public static Tree cloneTree(Tree tree) {
+            tree = add(tree);
+            random(tree);
+            return retans(tree);
+        }
+
+        public static Tree add(Tree node) {
+            if (node == null)
+                return null;
+            Tree temp = new Tree(node.data);
+            Tree lft = node.left;
+            node.left = temp;
+            temp.left = add(lft);
+            node.right = add(node.right);
+            return node;
+        }
+
+        public static void random(Tree root) {
+            if (root == null)
+                return;
+            if (root.left != null && root.random != null)
+                root.left.random = root.random.left;
+            random(root.left);
+            random(root.right);
+        }
+
+        public static Tree retans(Tree root) {
+            if (root == null)
+                return null;
+            Tree temp = root.right;
+            root = root.left;
+            root.left = retans(root.left);
+            root.right = retans(temp);
+            return root;
+
+        }
+        // ======================16 august===================================
+
+        // binary tree to doubly //linkedlist
+        Node bTreeToClist(Node root) {
+            Node ret = bTreeToClist_(root);
+            return ret.right;
+        }
+
+        Node bTreeToClist_(Node root) {
+            if (root == null)
+                return null;
+            Node lft = bTreeToClist_(root.left);
+            Node rt = bTreeToClist_(root.right);
+            if (lft == null && rt == null) {
+                root.left = root;
+                root.right = root;
+                return root;
+            } else if (lft != null && rt == null) {
+                Node first = lft.right;
+                lft.right = root;
+                root.left = lft;
+                root.right = first;
+                first.left = root;
+                return root;
+            } else if (lft == null && rt != null) {
+                Node first = rt.right;
+                root.right = first;
+                first.left = root;
+                root.left = rt;
+                rt.right = root;
+                return rt;
+            }
+
+            else {
+
+                Node lftfirst = lft.right;
+                lft.right = root;
+                root.left = lft;
+                Node rtfirst = rt.right;
+                root.right = rtfirst;
+                rtfirst.left = root;
+                lftfirst.left = rt;
+                rt.right = lftfirst;
+                return rt;
+
+            }
+        }
     }
 
-    public static Tree add(Tree node) {
-        if (node == null)
-            return null;
-        Tree temp = new Tree(node.data);
-        Tree lft = node.left;
-        node.left = temp;
-        temp.left = add(lft);
-        node.right = add(node.right);
-        return node;
+    // ===========================dll to binary tree===============
+
+    // isBstpreorder
+    public boolean isValidBST(TreeNode root) {
+        prev = null;
+        return isValidBST_(root);// && isValidBST(root.right);
     }
 
-    public static void random(Tree root) {
+    TreeNode prev = null;
+
+    public boolean isValidBST_(TreeNode root) {
         if (root == null)
-            return;
-        if (root.left != null && root.random != null)
-            root.left.random = root.random.left;
-        random(root.left);
-        random(root.right);
+            return true;
+        boolean res = true;
+
+        res = res && isValidBST_(root.left);
+        if (prev != null && prev.val >= root.val)
+            return false;
+        prev = root;
+        System.out.println(prev.val);
+        res = res && isValidBST_(root.right);
+        return res;
     }
-
-
-    public static Tree retans(Tree root) {
-        if (root == null)
-            return null;
-        Tree temp = root.right;
-        root = root.left;
-        root.left = retans(root.left);
-        root.right = retans(temp);
-        return root;
-
-    }                 
-                    
+    
 }

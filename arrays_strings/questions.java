@@ -99,6 +99,90 @@ public class questions {
             System.out.println(max);
         }
     }
+    // rotate array
+
+    public void rotate(int[] nums, int k) {
+
+        if (k == 0)
+            return;
+        k = k % nums.length;
+        rt(nums, 0, nums.length - 1 - k);
+        rt(nums, nums.length - k, nums.length - 1);
+        rt(nums, 0, nums.length - 1);
+    }
+
+    public void rt(int[] arr, int si, int ei) {
+        int i = si;
+        int j = ei;
+        while (i < j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    // orderly queue
+    public String orderlyQueue(String str, int K) {
+        if (K == 0)
+            return str;
+        if (K == 1) {
+            String ans = str;
+            String ques = str;
+            int n = str.length();
+            for (int i = 0; i < n; i++) {
+                ques = ques.substring(1) + ques.charAt(0);
+                if (ques.compareTo(ans) < 0)
+                    ans = ques;
+            }
+            return ans;
+        } else {
+            char[] ch = str.toCharArray();
+            Arrays.sort(ch);
+            return String.valueOf(ch);
+        }
+    }
+
+    // leetcode 11
+
+    public int maxArea(int[] height) {
+        int area = Integer.MIN_VALUE;
+        int i = 0;
+        int j = height.length - 1;
+        while (i < j) {
+            int minhei = Math.min(height[i], height[j]);
+            area = Math.max(area, (j - i) * minhei);
+            if (minhei == height[i])
+                i++;
+            else
+                j--;
+        }
+        return area;
+    }
+
+    // leetcode 977
+
+    public int[] sortedSquares(int[] A) {
+        int n = A.length;
+        int[] squares = new int[n];
+        int i = 0;
+        int j = n - 1;
+        int p = n - 1;
+        while (i <= j) {
+            int temp = Math.max(A[i] * A[i], A[j] * A[j]);
+            if (temp == A[i] * A[i]) {
+                squares[p] = temp;
+                i++;
+                p--;
+            } else {
+                squares[p] = temp;
+                j--;
+                p--;
+            }
+        }
+        return squares;
+    }
 
 
     
