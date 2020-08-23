@@ -587,5 +587,88 @@ public class questions {
         res = res && isValidBST_(root.right);
         return res;
     }
+
+    // leetcode 99
+    // recover bst
+    // morris traversal
+    public void recoverTree(TreeNode root) {
+        TreeNode curr = root;
+        TreeNode prev = null;
+        TreeNode first = null;
+        TreeNode second = null;
+        while (curr != null) {
+            if (curr.left == null) {
+                if (prev == null)
+                    prev = curr;
+                else {
+                    if (prev.val > curr.val) {
+                        if (first == null) {
+                            first = prev;
+                            second = curr;
+                        } else
+                            second = curr;
+                    }
+                    prev = curr;
+                }
+                curr = curr.right;
+            } else {
+                TreeNode leftkaright = findleftkarightmost(curr);
+                if (leftkaright.right == curr) {
+                    leftkaright.right = null;
+                    if (prev == null)
+                        prev = curr;
+                    else {
+                        if (prev.val >= curr.val) {
+                            if (first == null) {
+                                first = prev;
+                                second = curr;
+                            } else
+                                second = curr;
+                        }
+                        prev = curr;
+                    }
+                    curr = curr.right;
+                } else {
+                    leftkaright.right = curr;
+                    curr = curr.left;
+                }
+            }
+        }
+        if (first != null) {
+            int temp = first.val;
+            first.val = second.val;
+            second.val = temp;
+        }
+    }
+
+    public TreeNode findleftkarightmost(TreeNode root) {
+        TreeNode curr = root.left;
+        while (curr.right != null && curr.right != root)
+            curr = curr.right;
+        return curr;
+    }
+
     
+    // construct bst from postorder
+
+    public static Node constructTree(int[] post, int n) {
+        idx_ = n - 1;
+        return construct(post, null, (int) -1e8, (int) 1e8);
+    }
+
+    static int idx_ = 0;
+
+    public static Node construct(int[] post, Node curr, int leftlimit, int rightlimit) {
+        if (idx_ < 0)
+            return null;
+        if (post[idx_] >= leftlimit && post[idx_] <= rightlimit) {
+            Node node = new Node(post[idx_]);
+            idx_--;
+            node.right = construct(post, node, node.data + 1, rightlimit);
+            node.left = construct(post, node, leftlimit, node.data - 1);
+            return node;
+        }
+        return null;
+    }
+
 }
