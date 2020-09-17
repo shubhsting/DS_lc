@@ -126,8 +126,65 @@ public class heap {
         return gcd(b, a % b);
     }
 
+    // trapping rainwater 2
+    class Solution {
+        public class random {
+            int val = 0;
+            int x = 0;
+            int y = 0;
+
+            random(int v, int x, int y) {
+                this.val = v;
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+        public int trapRainWater(int[][] heightMap) {
+            int[][] dir = { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
+            int n = heightMap.length;
+            int m = heightMap[0].length;
+            boolean[][] vis = new boolean[n][m];
+            PriorityQueue<random> pq = new PriorityQueue<>((random a, random b) -> {
+                return a.val - b.val;
+            });
+            for (int i = 0; i < n; i++) {
+                vis[i][0] = true;
+                vis[i][m - 1] = true;
+                pq.add(new random(heightMap[i][0], i, 0));
+                pq.add(new random(heightMap[i][m - 1], i, m - 1));
+            }
+            for (int i = 0; i < m; i++) {
+                vis[0][i] = true;
+                vis[n - 1][i] = true;
+                pq.add(new random(heightMap[0][i], 0, i));
+                pq.add(new random(heightMap[n - 1][i], n - 1, i));
+            }
+            int ans = 0;
+            while (pq.size() != 0) {
+                random temp = pq.remove();
+                int a = temp.x;
+                int b = temp.y;
+                int pval = temp.val;
+                for (int i = 0; i < dir.length; i++) {
+                    int nx = a + dir[i][0];
+                    int ny = b + dir[i][1];
+                    if (nx >= 0 && ny >= 0 && nx < n && ny < m && !vis[nx][ny]) {
+                        vis[nx][ny] = true;
+                        if (heightMap[nx][ny] > pval)
+                            pq.add(new random(heightMap[nx][ny], nx, ny));
+                        else {
+
+                            ans += pval - heightMap[nx][ny];
+                            pq.add(new random(pval, nx, ny));
+                        }
+                    }
+                }
+            }
+            return ans;
+        }
+    }
 
 
     
-
 }
