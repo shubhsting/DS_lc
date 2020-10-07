@@ -146,7 +146,8 @@ public class questions {
             }
         }
 
-    }}
+    }
+}
 
     // Number of islands 2 lintcode
     /**

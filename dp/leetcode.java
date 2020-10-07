@@ -99,9 +99,19 @@ public class leetcode {
         return Math.min(costs[costs.length - 1][0], Math.min(costs[costs.length - 1][1], costs[costs.length - 1][2]));
     }
 
+    // leetcode 650
+    public int minSteps(int n) {
+        int[] dp = new int[n + 1];
+        dp[1] = 0;
+        for (int i = 2; i <= n; i++) {
+            dp[i] = i;
+            for (int j = i / 2; j >= 1; j--) {
+                if (i % j == 0) {
+                    dp[i] = Math.min(dp[i], dp[j] + i / j);
+                }
+            }
+        }
+        return dp[n];
+    }
 
-
-
-
-    
 }
