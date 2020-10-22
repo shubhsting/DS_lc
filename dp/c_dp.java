@@ -1,5 +1,6 @@
 package dp;
 
+//cut type/given point ko baad mein solve kro phle left right nikaal lo
 public class c_dp {
 
     // leetcode 312
@@ -71,4 +72,101 @@ public class c_dp {
         }
         return dp[0][nums.length - 1];
     }
+
+    // lintcode 725 boolean parenthesisation
+    public int countParenth(char[] symb, char[] oper) {
+        int n = symb.length;
+        return cp(symb, oper, 0, symb.length - 1, true, new int[n][n], new int[n][n]);
+    }
+
+    public int cp(char[] symb, char[] oper, int start, int end, boolean flag, int[][] dpt, int[][] dpf) {
+        if (start == end && flag == true) {
+            return dpt[start][end] = (symb[start] == 'T' ? 1 : 0);
+        }
+
+        if (start == end && flag == false) {
+            return dpf[start][end] = (symb[start] == 'F' ? 1 : 0);
+        }
+
+        if (flag == true && dpt[start][end] != 0)
+            return dpt[start][end];
+        if (flag == false && dpf[start][end] != 0)
+            return dpf[start][end];
+        int count = 0;
+        for (int i = start; i < end; i++) {
+            int lefttrue = cp(symb, oper, start, i, true, dpt, dpf);
+            int righttrue = cp(symb, oper, i + 1, end, true, dpt, dpf);
+            int leftfalse = cp(symb, oper, start, i, false, dpt, dpf);
+            int rightfalse = cp(symb, oper, i + 1, end, false, dpt, dpf);
+
+            if (oper[i] == '&') {
+                if (flag == true)
+                    count += lefttrue * righttrue;
+                else
+                    count += lefttrue * rightfalse + righttrue * leftfalse + leftfalse * rightfalse;
+            }
+
+            else if (oper[i] == '|') {
+                if (flag == false)
+                    count += leftfalse * rightfalse;
+                else
+                    count += lefttrue * rightfalse + righttrue * leftfalse + lefttrue * righttrue;
+            }
+
+            else {
+                if (flag == false)
+                    count += lefttrue * righttrue + leftfalse * rightfalse;
+                else
+                    count += lefttrue * rightfalse + righttrue * leftfalse;
+            }
+        }
+        if (flag == true)
+            dpt[start][end] = count;
+        if (flag == false)
+            dpf[start][end] = count;
+        return count;
+    }
+
+    // egg drop problem
+    public int superEggDrop(int K, int N) {
+        if (K == 1)
+            return N;
+        // return superEggDrop_(K,N,new int[K+1][N+1]);
+        return superEggDrop_(K, N);
+    }
+
+    // public int superEggDrop_(int K,int N,int[][] dp) {
+    // if(K<=1 ||N<=1) return dp[K][N]=N;
+    // if(dp[K][N]!=0) return dp[K][N];
+    // int ans=Integer.MAX_VALUE;
+    // for(int f=1;f<=N;f++){
+    // int notbreak=superEggDrop_(K,N-f,dp);
+    // int breakh=superEggDrop_(K-1,f-1,dp);
+    // int minv=Math.max(notbreak,breakh)+1;
+    // ans=Math.min(ans,minv);
+    // }
+    // return dp[K][N]=ans;
+    // }
+
+    public int superEggDrop_(int K, int N) {
+        int[][] dp = new int[N + 1][K + 1];
+        // for(int moves=0;moves<=N;moves++){
+        // dp[moves][0]=0;
+        // dp[moves][1]=moves;
+        // }
+
+        // for(int eggs=0;eggs<=K;eggs++){
+        // dp[0][eggs]=0;
+        // dp[1][eggs]=1;
+        // }
+        for (int moves = 1; moves <= N; moves++) {
+            for (int eggs = 1; eggs <= K; eggs++) {
+                dp[moves][eggs] = dp[moves - 1][eggs] + dp[moves - 1][eggs - 1] + 1;
+                if (dp[moves][eggs] >= N)
+                    return moves;
+            }
+        }
+        return -1;
+    }
+
 }
